@@ -1,0 +1,110 @@
+import type { Name } from './types';
+
+// Catálogo seed local para desarrollo. En producción vive en Postgres (tabla
+// `names`) y este archivo pasa a ser el seed de la migración correspondiente.
+// Incluye nombres largos (Maximiliano, Guadalupe) a propósito: ejercitan el
+// auto-shrink de la NameCard.
+export const names: Name[] = [
+  {
+    id: 'emilia',
+    name: 'Emilia',
+    gender: 'f',
+    origin: 'Latino',
+    meaning: 'La que se esfuerza y no se rinde',
+  },
+  { id: 'mateo', name: 'Mateo', gender: 'm', origin: 'Hebreo', meaning: 'Regalo de Dios' },
+  {
+    id: 'violeta',
+    name: 'Violeta',
+    gender: 'f',
+    origin: 'Latino',
+    meaning: 'Como la flor, símbolo de modestia',
+  },
+  { id: 'leon', name: 'León', gender: 'm', origin: 'Latino', meaning: 'Valiente como el león' },
+  { id: 'noa', name: 'Noa', gender: 'x', origin: 'Hebreo', meaning: 'Movimiento, descanso' },
+  {
+    id: 'isidora',
+    name: 'Isidora',
+    gender: 'f',
+    origin: 'Griego',
+    meaning: 'Regalo de la diosa Isis',
+  },
+  {
+    id: 'gaspar',
+    name: 'Gaspar',
+    gender: 'm',
+    origin: 'Persa',
+    meaning: 'El que guarda el tesoro',
+  },
+  { id: 'maite', name: 'Maite', gender: 'f', origin: 'Vasco', meaning: 'Amada' },
+  { id: 'vicente', name: 'Vicente', gender: 'm', origin: 'Latino', meaning: 'El que vence' },
+  { id: 'amanda', name: 'Amanda', gender: 'f', origin: 'Latino', meaning: 'Digna de ser amada' },
+  { id: 'ariel', name: 'Ariel', gender: 'x', origin: 'Hebreo', meaning: 'León de Dios' },
+  { id: 'florencia', name: 'Florencia', gender: 'f', origin: 'Latino', meaning: 'La que florece' },
+  {
+    id: 'clemente',
+    name: 'Clemente',
+    gender: 'm',
+    origin: 'Latino',
+    meaning: 'De carácter bondadoso',
+  },
+  {
+    id: 'antonia',
+    name: 'Antonia',
+    gender: 'f',
+    origin: 'Latino',
+    meaning: 'Valiosa, inestimable',
+  },
+  {
+    id: 'baltazar',
+    name: 'Baltazar',
+    gender: 'm',
+    origin: 'Asirio',
+    meaning: 'Protegido por Dios',
+  },
+  {
+    id: 'trinidad',
+    name: 'Trinidad',
+    gender: 'x',
+    origin: 'Latino',
+    meaning: 'Unión de tres en uno',
+  },
+  {
+    id: 'guadalupe',
+    name: 'Guadalupe',
+    gender: 'x',
+    origin: 'Árabe',
+    meaning: 'Río de amor escondido',
+  },
+  { id: 'salvador', name: 'Salvador', gender: 'm', origin: 'Latino', meaning: 'El que salva' },
+  {
+    id: 'julieta',
+    name: 'Julieta',
+    gender: 'f',
+    origin: 'Latino',
+    meaning: 'De raíces fuertes, juvenil',
+  },
+  {
+    id: 'maximiliano',
+    name: 'Maximiliano',
+    gender: 'm',
+    origin: 'Latino',
+    meaning: 'El más grande',
+  },
+  {
+    id: 'amparo',
+    name: 'Amparo',
+    gender: 'f',
+    origin: 'Latino',
+    meaning: 'La que protege y da refugio',
+  },
+  {
+    id: 'emiliano',
+    name: 'Emiliano',
+    gender: 'm',
+    origin: 'Latino',
+    meaning: 'El que trabaja con empeño',
+  },
+  { id: 'cruz', name: 'Cruz', gender: 'x', origin: 'Latino', meaning: 'Símbolo de fe y encuentro' },
+  { id: 'rafaela', name: 'Rafaela', gender: 'f', origin: 'Hebreo', meaning: 'Sanada por Dios' },
+];
