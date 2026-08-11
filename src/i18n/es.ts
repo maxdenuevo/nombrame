@@ -15,6 +15,16 @@ export default {
       ctaFavorites: 'Ver mis favoritos',
       ctaMatches: 'Ver mis matches',
     },
+    done: {
+      title: 'Completaste este deck.',
+      subtitle: 'Elige otro deck para seguir deslizando.',
+      cta: 'Ver mis decks',
+    },
+    emptyForFilter: {
+      title: 'No hay nombres así en este deck.',
+      subtitle: 'Prueba con otro filtro o cambia de deck.',
+      cta: 'Cambiar de deck',
+    },
   },
   favorites: {
     title: 'Tus favoritos',
@@ -42,5 +52,19 @@ export default {
     f: 'Niña',
     m: 'Niño',
     x: 'Neutro',
+  },
+  library: {
+    title: 'Tus decks',
+    discover: 'Descubrir',
+    filter: {
+      label: 'Mostrar nombres de',
+      all: 'Todos',
+    },
+    allNames: 'Todos los nombres',
+    allNamesDescription: 'El catálogo completo, sin filtro temático.',
+    add: 'Agregar',
+    added: 'Agregado',
+    progress: '%{seen} de %{total} vistos',
+    activeDeck: 'Deck activo',
   },
 };

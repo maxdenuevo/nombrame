@@ -58,7 +58,9 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider value={navTheme}>
           <StatusBar style="auto" />
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="decks" options={{ presentation: 'modal' }} />
+          </Stack>
         </ThemeProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>

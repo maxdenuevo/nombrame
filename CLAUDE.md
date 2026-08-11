@@ -95,20 +95,26 @@ Dos canales, según el estado de la app de quien recibe:
 ## Estructura y estado actual
 
 ```
-src/app/            pantallas (Expo Router): (tabs)/index = deck, favoritos, matches
-src/components/     SwipeDeck, NameCard, UndoButton, AppText, AppButton, Chip, Material, …
+src/app/            pantallas (Expo Router): (tabs)/index = deck, favoritos, matches; /decks = biblioteca (modal)
+src/components/     SwipeDeck, NameCard, DeckCard, DeckHeader, FilterChip, UndoButton, AppText, AppButton, Chip, Material, …
 src/theme/          tokens.ts (primitivos) → theme.ts (semántico) → useTheme
 src/i18n/           claves de traducción (solo es por ahora)
-src/data/names.ts   catálogo local TEMPORAL (muere cuando se conecte Supabase)
-src/store/          useDeckStore (Zustand): swipes en memoria, deshacer de un nivel
-supabase/migrations schema completo, SIN APLICAR (no existe el proyecto aún)
+src/data/           names.ts + decks.ts: catálogo local TEMPORAL (fuente del seed
+                    generado; ver SOURCES.md y scripts/generate-seed.mjs)
+src/store/          useDeckStore (swipes, deshacer de un nivel) y useLibraryStore
+                    (deck activo, filtro de género, biblioteca) — ambos persistidos
+                    en AsyncStorage
+supabase/migrations schema completo, SIN APLICAR (no existe el proyecto aún);
+                    00002 y 00004 son GENERADOS, no editar a mano
 ```
 
-Funciona hoy: deck de swipe con catálogo local, favoritos, estados vacíos,
-modo claro/oscuro, splash hasta cargar fuentes. **Pendiente:** proyecto de
-Supabase (aplicar migraciones), auth Google/Apple, wiring de TanStack Query
-(hoy el provider existe pero nadie lo usa), vinculación de pareja, MatchModal,
-Edge Function de push, persistencia local de swipes.
+Funciona hoy: deck de swipe con catálogo local, decks temáticos con biblioteca
+y filtro de género, favoritos, estados vacíos, modo claro/oscuro, splash hasta
+cargar fuentes, persistencia local de swipes y biblioteca. **Pendiente:**
+proyecto de Supabase (aplicar migraciones), auth Google/Apple, wiring de
+TanStack Query (hoy el provider existe pero nadie lo usa), vinculación de
+pareja, MatchModal, Edge Function de push, expansión del catálogo a ~250
+nombres (ver src/data/SOURCES.md).
 
 ## Convenciones de código
 
