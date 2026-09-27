@@ -7,6 +7,7 @@ import { DeckCover } from '@/components/DeckCover';
 import { IconButton } from '@/components/ui/IconButton';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Text } from '@/components/ui/Text';
+import { TextField } from '@/components/ui/TextField';
 import { Wash } from '@/components/ui/Wash';
 import { deckProgress } from '@/data/deckUtils';
 import { decks } from '@/data/decks';
@@ -18,6 +19,7 @@ import { t } from '@/i18n';
 import { haptic } from '@/lib/haptics';
 import { useDeckStore } from '@/store/useDeckStore';
 import { useLibraryStore } from '@/store/useLibraryStore';
+import { useSurnamesStore } from '@/store/useSurnamesStore';
 
 const GENDER_FILTERS: GenderFilter[] = ['all', 'f', 'm', 'x'];
 
@@ -40,6 +42,11 @@ export default function DecksScreen() {
   const addedDeckSlugs = useLibraryStore((s) => s.addedDeckSlugs);
   const activateDeck = useLibraryStore((s) => s.activateDeck);
   const setGenderFilter = useLibraryStore((s) => s.setGenderFilter);
+  const firstSurname = useSurnamesStore((s) => s.first);
+  const secondSurname = useSurnamesStore((s) => s.second);
+  const setFirstSurname = useSurnamesStore((s) => s.setFirst);
+  const setSecondSurname = useSurnamesStore((s) => s.setSecond);
+  const swapSurnames = useSurnamesStore((s) => s.swap);
 
   const swipedIds = useMemo(() => new Set(swiped.map((r) => r.nameId)), [swiped]);
   const added = decks.filter((d) => addedDeckSlugs.includes(d.slug));
@@ -104,7 +111,11 @@ export default function DecksScreen() {
     <View style={styles.screen}>
       <Wash wash={chrome.wash} id={`chrome-${dark ? 'dark' : 'light'}`} />
       <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
           <View style={styles.header}>
             <Text variant="title">{t('library.title')}</Text>
             <IconButton
@@ -128,6 +139,49 @@ export default function DecksScreen() {
               value={genderFilter}
               onChange={changeFilter}
             />
+          </View>
+
+          {/* Se guardan al escribir; borrar ambos campos apaga el nombre completo. */}
+          <View style={styles.filter}>
+            <Text variant="overline" tone="muted">
+              {t('surnames.label')}
+            </Text>
+            <View style={styles.surnames}>
+              <View style={styles.surnameFields}>
+                <TextField
+                  value={firstSurname}
+                  onChangeText={setFirstSurname}
+                  placeholder={t('surnames.first')}
+                  accessibilityLabel={t('surnames.first')}
+                  autoCapitalize="words"
+                  autoComplete="family-name"
+                  textContentType="familyName"
+                  autoCorrect={false}
+                  spellCheck={false}
+                  returnKeyType="done"
+                />
+                <TextField
+                  value={secondSurname}
+                  onChangeText={setSecondSurname}
+                  placeholder={t('surnames.secondOptional')}
+                  accessibilityLabel={t('surnames.second')}
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  spellCheck={false}
+                  returnKeyType="done"
+                />
+              </View>
+              <IconButton
+                icon="swap-vertical"
+                size="sm"
+                accessibilityLabel={t('surnames.swap')}
+                disabled={!firstSurname.trim() || !secondSurname.trim()}
+                onPress={() => {
+                  haptic.select();
+                  swapSurnames();
+                }}
+              />
+            </View>
           </View>
 
           <DeckCover
@@ -177,6 +231,15 @@ const styles = StyleSheet.create({
     marginTop: space.xl,
   },
   filter: {
+    gap: space.sm,
+  },
+  surnames: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+  },
+  surnameFields: {
+    flex: 1,
     gap: space.sm,
   },
   grid: {

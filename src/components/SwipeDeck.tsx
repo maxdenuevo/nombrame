@@ -20,6 +20,7 @@ import { motion, radius, space } from '@/design/tokens';
 import { useSwatchScheme } from '@/design/useScheme';
 import { t } from '@/i18n';
 import { haptic } from '@/lib/haptics';
+import { useFullName } from '@/store/useSurnamesStore';
 
 export type SwipeDirection = 'left' | 'right';
 
@@ -82,6 +83,7 @@ interface TopCardProps {
 
 function TopCard({ name, onSwipe, enterFrom, ref }: TopCardProps) {
   const { card } = useSwatchScheme(swatchFor(name.id));
+  const fullName = useFullName(name.name);
   const { width } = useWindowDimensions();
   const exitX = width * 1.4;
   const threshold = width * FLING_DISTANCE_RATIO;
@@ -161,7 +163,7 @@ function TopCard({ name, onSwipe, enterFrom, ref }: TopCardProps) {
         style={[StyleSheet.absoluteFill, cardStyle]}
         accessible
         accessibilityLabel={t('deck.a11y.card', {
-          name: name.name,
+          name: fullName ?? name.name,
           origin: name.origin,
           gender: t(`gender.${name.gender}`),
           meaning: name.meaning,

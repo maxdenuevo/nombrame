@@ -15,6 +15,19 @@ export const decks: Deck[] = [
     attribution: 'Registro Civil de Chile',
   },
   {
+    slug: 'clasicos-chilenos',
+    title: 'Clásicos chilenos',
+    description: 'Nombres que llevan dos generaciones entre los más inscritos de Chile.',
+    attribution: 'Registro Civil de Chile, 1990–1999 y 2012–2021',
+  },
+  {
+    slug: 'hace-cien-anos',
+    title: 'Hace 100 años',
+    description:
+      'Nombres de abuelas y abuelos: los que ya volvieron, los que asoman y los que esperan su turno.',
+    attribution: 'Registro Civil de Chile, 1930–1965 y 2015–2021',
+  },
+  {
     slug: 'griegos',
     title: 'Griegos',
     description: 'Nombres con historia: dioses, filósofos y héroes del mundo griego.',
@@ -28,6 +41,18 @@ export const decks: Deck[] = [
     slug: 'cortos-y-sonoros',
     title: 'Cortos y sonoros',
     description: 'Nombres de pocas letras que suenan bien en cualquier idioma.',
+  },
+  {
+    slug: 'pueblos-originarios',
+    title: 'Pueblos originarios',
+    description: 'Nombres mapuche, quechua, aymara y guaraní que ya se inscriben en Chile.',
+    attribution: 'Registro Civil de Chile, inscripciones 2010-2021',
+  },
+  {
+    slug: 'unisex',
+    title: 'Unisex',
+    description: 'Nombres que se usan para niñas y para niños, en Chile o en otros países.',
+    attribution: 'Registro Civil de Chile e INE de España',
   },
   {
     slug: 'top-espana',
@@ -75,6 +100,52 @@ export const deckNames: Record<string, readonly string[]> = {
     'lucia', 'rafael', 'matilda', 'samuel', 'olivia', 'valentin', 'francisca', 'renato', 'alice', 'daniel',
     'violeta', 'bastian', 'magdalena', 'dylan', 'camila', 'luis', 'monserrat', 'valentino', 'matilde', 'franco',
   ],
+  // Top 150 en 1990–1999 y top 250 en 2012–2021 (guaguas), fuera del Top 100
+  // Chile. Niñas y niños intercalados por inscripciones 2012–2021; al acabarse
+  // las niñas (hay menos clásicos de niña), siguen los niños. Ver SOURCES.md.
+  // prettier-ignore
+  'clasicos-chilenos': [
+    'constanza', 'francisco', 'belen', 'javier', 'pia', 'carlos', 'rocio', 'fernando', 'daniela', 'david',
+    'gabriela', 'pablo', 'mariana', 'cristian', 'elizabeth', 'gustavo', 'isabel', 'esteban', 'genesis', 'jorge',
+    'paula', 'manuel', 'ana', 'alejandro', 'angela', 'victor', 'denisse', 'rodrigo', 'barbara', 'elias',
+    'carolina', 'miguel', 'alexandra', 'leonardo', 'alejandra', 'eduardo', 'carla', 'andres', 'camilo', 'fabian',
+    'alvaro', 'cristopher', 'gonzalo', 'jean', 'ricardo', 'alexis', 'alan', 'hector', 'jesus', 'sergio',
+    'oscar', 'kevin', 'claudio', 'guillermo', 'marcelo', 'alex', 'mauricio', 'patricio', 'ivan', 'cesar',
+    'jonathan', 'roberto', 'mario',
+  ],
+  // Abren los imprescindibles editoriales; después, los que ya volvieron, los
+  // que asoman y los dormidos, cada grupo por uso en 1930–1965 con niñas y
+  // niños intercalados. Criterio en SOURCES.md.
+  // prettier-ignore
+  'hace-cien-anos': [
+    'ofelia', 'wenceslao', 'cordelia', 'enrique', 'patricia', 'ximena', 'elena', 'domingo', 'lucia', 'lorenzo',
+    'clara', 'augusto', 'elisa', 'salvador', 'aurora', 'pascual', 'violeta', 'nicanor', 'olivia', 'matilde',
+    'leonor', 'amelia', 'amalia', 'dominga', 'eloisa', 'pascuala', 'lorenza', 'juana', 'gregorio', 'alicia',
+    'leopoldo', 'gladys', 'benito', 'eliana', 'aurelio', 'luisa', 'horacio', 'julia', 'elsa', 'ines',
+    'mercedes', 'luz', 'nora', 'aida', 'ester', 'irene', 'georgina', 'eugenia', 'eva', 'zulema',
+    'rita', 'rosalia', 'regina', 'delfina', 'flora', 'rosa', 'hector', 'margarita', 'mario', 'marta',
+    'raul', 'carmen', 'guillermo', 'teresa', 'julio', 'olga', 'hugo', 'sonia', 'ramon', 'norma',
+    'hernan', 'blanca', 'rene', 'irma', 'segundo', 'gloria', 'osvaldo', 'hilda', 'humberto', 'graciela',
+    'orlando', 'berta', 'ernesto', 'raquel', 'alberto', 'yolanda', 'alfredo', 'elba', 'bernardo', 'fresia',
+    'armando', 'nelly', 'rolando', 'guillermina', 'eugenio', 'lucila', 'heriberto', 'elvira', 'reinaldo', 'filomena',
+    'rigoberto', 'ernestina', 'gilberto', 'zoila', 'octavio', 'zunilda', 'dagoberto', 'hortensia', 'arnoldo', 'uberlinda',
+    'waldo', 'luzmira', 'edmundo', 'herminia', 'leontina', 'celia', 'petronila', 'clementina', 'manuela',
+  ],
+  // Ordenado por inscripciones en Chile 2010-2021 (guaguas). Ver SOURCES.md.
+  // prettier-ignore
+  'pueblos-originarios': [
+    'rayen', 'aylen', 'millaray', 'lautaro', 'amaru', 'ayelen', 'nahuel', 'eluney', 'anahi', 'antu',
+    'tahiel', 'inti', 'aukan', 'nayra', 'newen', 'amancay', 'ayun', 'suyai', 'aliwen', 'likan',
+    'quimey', 'kallfu', 'liwen', 'kuyen', 'munay', 'maiten', 'illari', 'relmu', 'katari', 'llanka',
+  ],
+  // Primero los que más se mezclan en Chile; al final los que son unisex por
+  // el cruce entre países (Andrea y Elia). Criterio en SOURCES.md, "Género".
+  // prettier-ignore
+  unisex: [
+    'ariel', 'eluney', 'yael', 'antu', 'cruz', 'ari', 'jael', 'simone', 'eden', 'sasha',
+    'ayun', 'quimey', 'akira', 'aliwen', 'morgan', 'liwen', 'robin', 'kallfu', 'taylor', 'katari',
+    'marley', 'lur', 'haize', 'altair', 'ares', 'enea', 'munay', 'relmu', 'andrea', 'elia',
+  ],
   griegos: [
     'sofia',
     'isidora',
@@ -121,6 +192,7 @@ export const deckNames: Record<string, readonly string[]> = {
     'florencia',
     'clemente',
     'antonia',
+    'constanza',
     'maximo',
     'victoria',
     'salvador',
@@ -139,9 +211,11 @@ export const deckNames: Record<string, readonly string[]> = {
     'ignacio',
     'amparo',
     'emiliano',
+    'emilio',
     'pablo',
     'mario',
     'paula',
+    'paz',
     'julia',
     'claudia',
     'adriana',

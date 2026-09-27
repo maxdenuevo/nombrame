@@ -52,7 +52,10 @@ para armar una lista de favoritos.
 ## Modelo de datos (referencia)
 
 - `users`: perfil básico, ligado a Supabase Auth. Guarda además su(s) token(s) de
-  Expo Push para las notificaciones de match.
+  Expo Push para las notificaciones de match. El `display_name` lo elige la
+  persona (el del proveedor es solo sugerencia: puede ser un nombre que ya no
+  usa) y es lo que ve su pareja. No se guarda género, rol (mamá/papá) ni datos
+  del embarazo.
 - `couples`: vincula a dos usuarios mediante un código de invitación. Relación 1:1
   (una pareja, dos miembros, sin reemplazo automático). Existe un flujo de
   **desvincular**: al disolver la pareja, los swipes de cada persona se conservan
@@ -98,11 +101,20 @@ Dos canales, según el estado de la app de quien recibe:
   si el swipe se deshizo en esa ventana, el push nunca sale y la pareja no ve
   un match fantasma.
 
+**Contenido del push.** La pantalla bloqueada la ve cualquiera: un push puede
+revelar un embarazo que todavía no se cuenta y, en una pareja del mismo sexo,
+con quién. Por eso el push **nunca incluye el nombre de la pareja**: el cuerpo
+es "Coincidieron en Emilia". Si `profiles.push_discreet` está activo (se
+activa desde ajustes), el cuerpo es genérico, sin el nombre del bebé:
+"Tienes novedades". El único push es el de match: nada de reenganche (ver
+DESIGN.md §7, "Temas sensibles"). El copy vive en la Edge Function y sigue las
+mismas reglas de voz.
+
 ## Estructura y estado actual
 
 ```
 src/app/            pantallas (Expo Router): (tabs)/index = deck, favoritos, matches;
-                    /decks = biblioteca (modal); /onboarding = 3 pasos (gate con Stack.Protected)
+                    /decks = biblioteca (modal); /onboarding = 4 pasos (gate con Stack.Protected)
 src/components/     piezas de producto: SwipeDeck, NameCard, DeckActions, DeckHeader,
                     DeckCover, NameRow, TabBar, OnboardingStep, CardFan, …
 src/components/ui/  primitivos: Text, Button, IconButton, Chip, Glass, MeshBackdrop, Wash, …
@@ -112,23 +124,28 @@ src/i18n/           claves de traducción (solo es por ahora)
 src/data/           names.ts + decks.ts: catálogo local TEMPORAL (fuente del seed
                     generado; ver SOURCES.md y scripts/generate-seed.mjs)
 src/store/          useDeckStore (swipes, deshacer de un nivel), useLibraryStore
-                    (deck activo, filtro de género, biblioteca) y useOnboardingStore,
-                    persistidos en AsyncStorage; useStoresHydrated para el gate
-scripts/            check-design.mjs (AA, hash, PNG) y brand/render.mjs (ícono, splash)
+                    (deck activo, filtro de género, biblioteca), useOnboardingStore y
+                    useSurnamesStore (apellidos para ver el nombre completo; solo en
+                    el dispositivo, nunca en Postgres), persistidos en AsyncStorage;
+                    useStoresHydrated para el gate
+scripts/            check-design.mjs (AA, hash, PNG), brand/render.mjs (ícono, splash),
+                    generate-seed.mjs y missing-names.mjs (candidatos para el catálogo)
 supabase/migrations schema completo, SIN APLICAR (no existe el proyecto aún);
                     00002 y 00004 son GENERADOS, no editar a mano
 ```
 
 Funciona hoy: design system "Malla" (color fijo por nombre, vidrio, malla),
-onboarding de 3 pasos, deck de swipe con botones, acciones de accesibilidad y
-háptica, decks temáticos con biblioteca y filtro de género, favoritos, estados
+onboarding de 4 pasos, deck de swipe con botones, acciones de accesibilidad y
+háptica, decks temáticos con biblioteca y filtro de género, nombre completo con
+apellidos opcionales (card, favoritos), favoritos, estados
 vacíos, modo claro/oscuro, marca propia (ícono, splash), splash hasta cargar
 fuentes e hidratar, persistencia local de swipes, biblioteca y onboarding.
 **Pendiente:**
 proyecto de Supabase (aplicar migraciones), auth Google/Apple, wiring de
 TanStack Query (hoy el provider existe pero nadie lo usa), vinculación de
-pareja, MatchModal, Edge Function de push, expansión del catálogo a ~250
-nombres (ver src/data/SOURCES.md).
+pareja, MatchModal, Edge Function de push, pantalla de ajustes (pausar push,
+push discretos, borrar cuenta), ampliar el catálogo con los nombres chilenos
+más inscritos que faltan (ver src/data/SOURCES.md).
 
 ## Convenciones de código
 
@@ -152,6 +169,8 @@ npm run lint                 # ESLint (expo lint)
 npm run typecheck            # tsc --noEmit
 npm run check:design         # AA de cada color, reparto del hash, PNG de marca
 node scripts/brand/render.mjs  # regenerar ícono, adaptive icon, splash y favicon
+node scripts/generate-seed.mjs # regenerar los seeds SQL tras tocar src/data
+node scripts/missing-names.mjs # nombres más inscritos en Chile que faltan en el catálogo
 npx prettier --write .       # formateo
 ```
 
@@ -186,6 +205,10 @@ cambie:
 - **Privacidad de swipes:** los likes de una persona no deben ser visibles a su pareja
   hasta que haya match. Reforzar con Row Level Security en Postgres, no solo en el
   cliente.
+- **Lenguaje inclusivo y temas sensibles:** el copy no le da género gramatical a
+  quien usa la app ni asume una pareja hombre-mujer (se reescribe, no se usa
+  x/@/e). Pérdida gestacional, desvincular, push discretos y significados sin
+  estereotipos tienen reglas propias. Todo en DESIGN.md §7.
 - **Swipes offline-first:** swipear es en ráfaga y el público está en redes
   irregulares — un INSERT sincrónico por swipe que bloquee el deck se siente
   horrible en 3G. Escritura optimista con cola de reintentos (mutations de

@@ -14,32 +14,32 @@
 
 ### Lote 1 — seed inicial (ya en producción visual desde el inicio)
 
-| Nombre      | Género | Origen | Significado                       | Decks        | Notas                         |
-| ----------- | ------ | ------ | --------------------------------- | ------------ | ----------------------------- |
-| Emilia      | niña   | Latino | La que se esfuerza y no se rinde  | top lat      |                               |
-| Mateo       | niño   | Hebreo | Regalo de Dios                    | top cort     | mismo significado que Teodoro |
-| Violeta     | niña   | Latino | Como la flor, símbolo de modestia | top lat      |                               |
-| León        | niño   | Latino | Valiente como el león             | top lat cort |                               |
-| Noa         | neutro | Hebreo | Movimiento, descanso              | cort         |                               |
-| Isidora     | niña   | Griego | Regalo de la diosa Isis           | top gr       |                               |
-| Gaspar      | niño   | Persa  | El que guarda el tesoro           | top          |                               |
-| Maite       | niña   | Vasco  | Amada                             | top cort     |                               |
-| Vicente     | niño   | Latino | El que vence                      | top lat      |                               |
-| Amanda      | niña   | Latino | Digna de ser amada                | top lat      |                               |
-| Ariel       | neutro | Hebreo | León de Dios                      | cort         |                               |
-| Florencia   | niña   | Latino | La que florece                    | top lat      |                               |
-| Clemente    | niño   | Latino | De carácter bondadoso             | top lat      |                               |
-| Antonia     | niña   | Latino | Valiosa, inestimable              | top lat      |                               |
-| Baltazar    | niño   | Asirio | Protegido por Dios                |              |                               |
-| Trinidad    | neutro | Latino | Unión de tres en uno              | top          |                               |
-| Guadalupe   | neutro | Árabe  | Río de amor escondido             |              |                               |
-| Salvador    | niño   | Latino | El que salva                      | lat          |                               |
-| Julieta     | niña   | Latino | De raíces fuertes, juvenil        | top lat      |                               |
-| Maximiliano | niño   | Latino | El más grande                     | top lat      | mismo significado que Máximo  |
-| Amparo      | niña   | Latino | La que protege y da refugio       | top lat      |                               |
-| Emiliano    | niño   | Latino | El que trabaja con empeño         | top lat      |                               |
-| Cruz        | neutro | Latino | Símbolo de fe y encuentro         | cort         |                               |
-| Rafaela     | niña   | Hebreo | Sanada por Dios                   | top          |                               |
+| Nombre      | Género | Origen | Significado                      | Decks        | Notas                         |
+| ----------- | ------ | ------ | -------------------------------- | ------------ | ----------------------------- |
+| Emilia      | niña   | Latino | La que se esfuerza y no se rinde | top lat      |                               |
+| Mateo       | niño   | Hebreo | Regalo de Dios                   | top cort     | mismo significado que Teodoro |
+| Violeta     | niña   | Latino | Como la flor                     | top lat      |                               |
+| León        | niño   | Latino | Valiente como el león            | top lat cort |                               |
+| Noa         | neutro | Hebreo | Movimiento, descanso             | cort         |                               |
+| Isidora     | niña   | Griego | Regalo de la diosa Isis          | top gr       |                               |
+| Gaspar      | niño   | Persa  | El que guarda el tesoro          | top          |                               |
+| Maite       | niña   | Vasco  | Amada                            | top cort     |                               |
+| Vicente     | niño   | Latino | El que vence                     | top lat      |                               |
+| Amanda      | niña   | Latino | Digna de ser amada               | top lat      |                               |
+| Ariel       | neutro | Hebreo | León de Dios                     | cort         |                               |
+| Florencia   | niña   | Latino | La que florece                   | top lat      |                               |
+| Clemente    | niño   | Latino | De carácter bondadoso            | top lat      |                               |
+| Antonia     | niña   | Latino | Valiosa, inestimable             | top lat      |                               |
+| Baltazar    | niño   | Asirio | Protegido por Dios               |              |                               |
+| Trinidad    | neutro | Latino | Unión de tres en uno             | top          |                               |
+| Guadalupe   | neutro | Árabe  | Río de amor escondido            |              |                               |
+| Salvador    | niño   | Latino | El que salva                     | lat          |                               |
+| Julieta     | niña   | Latino | De raíces fuertes, juvenil       | top lat      |                               |
+| Maximiliano | niño   | Latino | El más grande                    | top lat      | mismo significado que Máximo  |
+| Amparo      | niña   | Latino | La que protege y da refugio      | top lat      |                               |
+| Emiliano    | niño   | Latino | El que trabaja con empeño        | top lat      |                               |
+| Cruz        | neutro | Latino | Símbolo de fe y encuentro        | cort         |                               |
+| Rafaela     | niña   | Hebreo | Sanada por Dios                  | top          |                               |
 
 ### Lote 2 — top 10 Chile 2025 (nuevos)
 
@@ -109,10 +109,10 @@
 | Lucía     | niña   | Latino    | Portadora de luz                 | top      |                                                             |
 | Matilda   | niña   | Germánico | Fuerte en la batalla             | top      |                                                             |
 | Olivia    | niña   | Latino    | Olivo, símbolo de paz            | top      |                                                             |
-| Francisca | niña   | Germánico | Mujer libre                      | top      |                                                             |
+| Francisca | niña   | Germánico | Libre, del pueblo franco         | top      |                                                             |
 | Alice     | niña   | Germánico | De noble linaje                  | top      |                                                             |
 | Magdalena | niña   | Hebreo    | La de la torre                   | top      |                                                             |
-| Camila    | niña   | Latino    | La que sirve con nobleza         | top lat  |                                                             |
+| Camila    | niña   | Latino    | La que asiste en los ritos       | top lat  |                                                             |
 | Monserrat | niña   | Catalán   | De la montaña sagrada            | top      |                                                             |
 | Matilde   | niña   | Germánico | Poderosa guerrera                | top      |                                                             |
 | Agustín   | niño   | Latino    | Venerable, majestuoso            | top lat  |                                                             |
@@ -147,7 +147,7 @@
 | Dylan     | niño   | Galés     | Hijo del mar                     | top      |                                                             |
 | Luis      | niño   | Germánico | Guerrero ilustre                 | top      |                                                             |
 | Valentino | niño   | Latino    | Lleno de valor                   | top      |                                                             |
-| Franco    | niño   | Germánico | Hombre libre                     | top      |                                                             |
+| Franco    | niño   | Germánico | Libre, del pueblo franco         | top      |                                                             |
 
 ## Copy de decks (título · descripción · atribución)
 

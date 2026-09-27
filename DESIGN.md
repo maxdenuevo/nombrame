@@ -205,6 +205,11 @@ Primitivos en `src/components/ui/`, piezas de producto en `src/components/`.
   dejan el centro limpio para el nombre.
   - Arriba van los chips de origen y género.
   - Al centro, el nombre en `nameXl`.
+  - Si la persona configuró apellidos, debajo va el nombre completo
+    ("Leonor Muñoz Soto") en `heading` y tinta suave. Siempre visible, sin
+    tap: lo que se evalúa es cómo suena todo junto, de un vistazo. Nunca se
+    trunca; si el nombre es compuesto, el nombre grande baja a `nameXlMin`
+    para que ambos quepan en 360×640.
   - Abajo, el significado en un panel de vidrio.
   - Todo lo de adentro toma su tinta del swatch.
 - **La card siguiente** se asoma detrás, a escala 0.94, desplazada 12 px y con
@@ -241,6 +246,9 @@ Ambas pills abren la biblioteca.
 
 - **Arriba:** título y botón de cerrar, y debajo el filtro de género como
   control segmentado.
+- **"Probar con apellidos":** dos campos (primer y segundo apellido; el
+  segundo es opcional) y un botón para invertir el orden. Se guardan al
+  escribir; borrar ambos apaga el nombre completo.
 - **"Todos los nombres":** va en un cover ancho.
 - **Grilla de dos columnas:** primero "Tus decks" y después "Descubrir". Cada
   cover va en el color de su deck.
@@ -251,7 +259,9 @@ Ambas pills abren la biblioteca.
 ### Listas
 
 `NameRow` es una fila en el color del nombre, con el nombre en `name`, el
-significado en `caption` y el origen en un chip. Favoritos muestra primero lo
+significado en `caption` y el origen en un chip. Con apellidos configurados,
+los apellidos siguen al nombre en `heading` y tinta suave, y la fila puede
+pasar a dos líneas. Favoritos muestra primero lo
 último que te gustó, con el conteo junto al título.
 
 ### Tab bar
@@ -271,7 +281,7 @@ comienzo, nunca un error.
 
 ### Onboarding
 
-Tres pasos con la estructura de Folium:
+Cuatro pasos con la estructura de Folium:
 
 - **Fondo:** malla viva de una familia de color, con una capa esmerilada
   encima.
@@ -279,22 +289,31 @@ Tres pasos con la estructura de Folium:
   y la acción al pie.
 - **Arriba:** puntos de progreso y "Saltar".
 
-| Paso                         | Familia   | Acción                                          |
-| ---------------------------- | --------- | ----------------------------------------------- |
-| Encuentren el nombre juntos  | mandarina | Empezar                                         |
-| Desliza para decidir         | cielo     | Entendido (con card demo que se balancea)       |
-| ¿Ya saben si es niña o niño? | uva       | Es niña / Es niño / Todavía no sabemos → filtro |
+| Paso                      | Familia   | Acción                                    |
+| ------------------------- | --------- | ----------------------------------------- |
+| Elijan el nombre de a dos | mandarina | Empezar                                   |
+| Desliza para decidir      | cielo     | Entendido (con card demo que se balancea) |
+| ¿Qué nombres quieres ver? | uva       | De niña / De niño / Todos → filtro        |
+| ¿Cómo suena con apellido? | menta     | Apellidos opcionales → nombre completo    |
 
 - **El gate** usa `Stack.Protected` en el layout raíz: se muestra hasta que la
-  persona elige una opción o salta.
+  persona termina el último paso o salta.
+- **El paso de apellidos** es opt-in. La ilustración es una MiniCard de Leonor
+  que muestra el nombre completo a medida que se escribe. Tiene un solo botón
+  que cambia: "Ahora no" con los campos vacíos, "Ver con apellidos" con algo
+  escrito (en 360×640 no caben dos). Con el teclado abierto se esconden la
+  ilustración y el texto.
+- **Alto de la ilustración:** 34 % del alto de pantalla, con tope de 288. Si
+  con font scale alto igual no cabe, el paso scrollea.
 - **Invitar a la pareja** no es un paso todavía: llega con el backend.
 
 ### MatchModal (spec, sin implementar: requiere backend)
 
 - **Fondo:** pantalla completa con `MeshBackdrop` en la familia del nombre que
   hizo match. El color del nombre llega hasta su celebración.
-- **Contenido:** la card del nombre en vidrio y "¡A ambos les gustó
-  **Emilia**!". Específico, nunca "¡Es un match!".
+- **Contenido:** la card del nombre en vidrio y "¡Tú y Cami eligieron
+  **Emilia**!", con el nombre de la pareja. Específico, nunca "¡Es un
+  match!", y sin género gramatical (ver §7).
 - **Animación:** una sola secuencia de ~1.2 s con confeti de 12–20 vistas de
   Reanimated en los colores del swatch, sin librería. Suena `haptic.success`.
 - **Acciones:** "Ver matches" (sólido) y "Seguir deslizando" (vidrio).
@@ -306,8 +325,8 @@ Tres pasos con la estructura de Folium:
 
 - **Registro:** español, tuteo, cálido y directo. Nada de voseo ni de tono
   corporativo.
-- **Plural para la pareja:** se usa cuando la acción es de ambos, como
-  "Sigan deslizando" o "A ambos les gustó".
+- **Plural para la pareja:** se usa cuando la acción es de las dos
+  personas, como "Sigan deslizando" o "Coincidieron en Emilia".
 - **Específico gana a genérico:** incluir el nombre siempre que se pueda.
 - **Los errores dicen qué pasó y qué hacer.** Por ejemplo: "No pudimos
   guardar tu like. Revisa tu conexión e intenta de nuevo."
@@ -316,6 +335,62 @@ Tres pasos con la estructura de Folium:
 - **Sin emojis en la UI:** el color y la tipografía ya ponen la emoción.
 - **Todo pasa por i18n** (`src/i18n/es.ts`), incluidas las etiquetas de
   accesibilidad.
+
+### Lenguaje inclusivo
+
+La app no sabe (ni pregunta) el género de quien la usa ni el de su pareja:
+pueden ser dos mujeres, dos hombres o personas no binarias.
+
+- **Reescribir, no marcar.** Se arma la frase para que no haya adjetivo con
+  género, en vez de usar x, @ o e: los lectores de pantalla las leen mal y a un
+  público amplio le chocan.
+
+  | Evitar                             | Preferir                             |
+  | ---------------------------------- | ------------------------------------ |
+  | juntos, cada uno, los dos, ambos   | de a dos, cada persona, coincidieron |
+  | ¿Estás listo? · Bienvenido         | ¿Empezamos? · Te damos la bienvenida |
+  | mamá y papá · tu esposo, tu esposa | tu pareja · tu familia               |
+  | ¡A ambos les gustó Emilia!         | ¡Tú y Cami eligieron Emilia!         |
+
+- **A la pareja se le dice por su nombre,** nunca por pronombre ni por rol:
+  "A Cami también le gustó", no "A ella también".
+- **"Pareja" no presupone nada:** ni romance ni dos géneros. Es la persona con
+  quien se elige.
+- **"El nombre" antes que "tu bebé".** Buscar un nombre no siempre es esperar
+  una guagua: hay adopciones de niñas y niños más grandes, y personas trans o
+  no binarias que eligen el propio. El copy habla del nombre; "bebé" o "guagua"
+  solo donde no haya alternativa.
+- **El modo individual es de primera clase.** Los matches son de a dos, los
+  favoritos no: nada de "la app funciona solo en pareja".
+
+### Temas sensibles
+
+- **Pérdida gestacional.** Entre un 10 y un 20 % de los embarazos confirmados
+  terminan en pérdida, y la app no se entera. Por eso:
+  - No hay push de reenganche ("¿Ya eligieron?", "¡Sigan deslizando!"). El
+    único push es el de match.
+  - No hay cuenta regresiva a la fecha de parto ni "semana X".
+  - Pausar las notificaciones o borrar la cuenta se hace en pocos toques y sin
+    pedir motivo.
+- **Desvincular** es neutro y sin culpa: "Desvincular", nunca "terminar" ni
+  "romper", y la confirmación nombra a la persona ("¿Desvincularte de Cami?")
+  sin reproche. Antes de confirmar se explica qué se conserva (los favoritos
+  de cada persona) y qué se pierde (los matches). La otra persona no recibe un
+  aviso alegre.
+- **Push discretos.** La pantalla bloqueada la ve cualquiera: el push nunca
+  lleva el nombre de la pareja. Detalle en `CLAUDE.md`, "Notificaciones de
+  match".
+- **Tu nombre lo eliges tú.** El nombre que da Google o Apple puede ser uno que
+  la persona ya no usa, y es el que ve su pareja. Al entrar por primera vez se
+  pregunta "¿Cómo quieres que te llamemos?", con el primer nombre del
+  proveedor como sugerencia editable.
+- **Significados sin estereotipos de género.** Si la etimología no lo dice, no
+  se agrega ("pura", "del hogar" o "la que sirve" como adorno); si hay dos
+  lecturas, se elige la que no encasilla. Criterio completo en
+  `src/data/SOURCES.md`.
+- **Tienda y marketing:** "para familias" o "en pareja", nunca "para mamá y
+  papá". Las capturas muestran nombres de niña, de niño y unisex; si aparecen
+  personas, las parejas son diversas.
 
 ## 8. Marca
 
@@ -353,6 +428,9 @@ espaciado literal. Si falta un valor, falta un token.
 ## 10. Qué NO hacer
 
 - No asignar color por género, ni a mano: el color de un nombre es su hash.
+- No darle género gramatical a quien usa la app (ni con x, @ o e), ni asumir
+  que la pareja es un hombre y una mujer. Ver §7.
+- No poner el nombre de la pareja en un push.
 - No aclarar la tinta para "arreglar" un contraste: se oscurece el fondo o el
   blob, y se corre el chequeo.
 - No usar la malla viva como fondo del día a día: es para onboarding y match.

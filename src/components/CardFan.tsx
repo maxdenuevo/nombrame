@@ -6,8 +6,9 @@ import type { Name } from '@/data/types';
 import { space } from '@/design/tokens';
 
 // Tres nombres reales del catálogo, cada uno en su color: la ilustración de la
-// app es su propio contenido, no dibujos.
-const FAN_IDS = ['mateo', 'emilia', 'florencia'] as const;
+// app es su propio contenido, no dibujos. Uno de niño, uno de niña y uno
+// unisex: lo primero que se ve ya dice que hay nombres para todos.
+const FAN_IDS = ['mateo', 'emilia', 'ariel'] as const;
 const fan = FAN_IDS.map((id) => names.find((n) => n.id === id)).filter((n): n is Name => n != null);
 
 /** Abanico de mini cards: la de al medio adelante, las otras inclinadas detrás. */

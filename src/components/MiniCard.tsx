@@ -13,7 +13,14 @@ import { useSwatchScheme } from '@/design/useScheme';
 const WIDTH = { sm: 88, lg: 150 } as const;
 const ASPECT = 1.36;
 
-export function MiniCard({ name, size = 'sm' }: { name: Name; size?: keyof typeof WIDTH }) {
+interface MiniCardProps {
+  name: Name;
+  size?: keyof typeof WIDTH;
+  /** Línea chica bajo el nombre, como el nombre completo en la card de swipe. */
+  subtitle?: string | null;
+}
+
+export function MiniCard({ name, size = 'sm', subtitle }: MiniCardProps) {
   const scheme = useSwatchScheme(swatchFor(name.id));
   const { card } = scheme;
   const width = WIDTH[size];
@@ -39,6 +46,11 @@ export function MiniCard({ name, size = 'sm' }: { name: Name; size?: keyof typeo
         >
           {name.name}
         </Text>
+        {subtitle ? (
+          <Text variant="caption" tone="muted" style={styles.subtitle}>
+            {subtitle}
+          </Text>
+        ) : null}
       </PaletteProvider>
     </View>
   );
@@ -51,5 +63,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: space.sm,
+  },
+  subtitle: {
+    marginTop: space.xs,
+    textAlign: 'center',
   },
 });

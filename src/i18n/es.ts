@@ -47,8 +47,8 @@ export default {
     title: 'Tus matches',
     soon: 'Muy pronto',
     noCouple: {
-      title: 'nombra.me funciona de a dos.',
-      subtitle: 'Invita a tu pareja y cuando a ambos les guste el mismo nombre, es un match.',
+      title: 'Los matches son de a dos.',
+      subtitle: 'Invita a tu pareja: cuando coincidan en un nombre, es un match.',
     },
     empty: {
       title: 'Todavía no coinciden.',
@@ -59,7 +59,14 @@ export default {
   gender: {
     f: 'Niña',
     m: 'Niño',
-    x: 'Neutro',
+    x: 'Unisex',
+  },
+  surnames: {
+    label: 'Probar con apellidos',
+    first: 'Primer apellido',
+    second: 'Segundo apellido',
+    secondOptional: 'Segundo apellido (opcional)',
+    swap: 'Invertir el orden de los apellidos',
   },
   library: {
     title: 'Tus decks',
@@ -80,8 +87,8 @@ export default {
     skip: 'Saltar',
     step: 'Paso %{step} de %{total}',
     welcome: {
-      title: 'Encuentren el nombre juntos',
-      body: 'Cada uno desliza por su lado. Cuando a los dos les gusta el mismo nombre, es un match.',
+      title: 'Elijan el nombre de a dos',
+      body: 'Cada persona desliza por su lado. Cuando coinciden en un nombre, es un match.',
       cta: 'Empezar',
     },
     swipe: {
@@ -90,11 +97,17 @@ export default {
       cta: 'Entendido',
     },
     gender: {
-      title: '¿Ya saben si es niña o niño?',
-      body: 'Te mostramos los nombres que buscan. Puedes cambiarlo cuando quieras en la biblioteca.',
-      girl: 'Es niña',
-      boy: 'Es niño',
-      unknown: 'Todavía no sabemos',
+      title: '¿Qué nombres quieres ver?',
+      body: 'Los nombres unisex aparecen en todas las opciones. Puedes cambiarlo cuando quieras en la biblioteca.',
+      girl: 'De niña',
+      boy: 'De niño',
+      all: 'Todos',
+    },
+    surnames: {
+      title: '¿Cómo suena con apellido?',
+      body: 'Verás cada nombre completo. Puedes cambiarlos cuando quieras en la biblioteca.',
+      cta: 'Ver con apellidos',
+      later: 'Ahora no',
     },
   },
 };

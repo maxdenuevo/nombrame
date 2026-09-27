@@ -8,11 +8,14 @@ import { PaletteProvider } from '@/design/PaletteContext';
 import { swatchFor } from '@/design/swatches';
 import { radius, space } from '@/design/tokens';
 import { useSwatchScheme } from '@/design/useScheme';
+import { useSurnames } from '@/store/useSurnamesStore';
 
 // Fila de lista (favoritos y, más adelante, matches): el nombre en su color,
-// el mismo de su card. Así se reconoce de un vistazo.
+// el mismo de su card. Así se reconoce de un vistazo. Con apellidos
+// configurados, el nombre completo, con los apellidos en tinta suave.
 export function NameRow({ name }: { name: Name }) {
   const { card } = useSwatchScheme(swatchFor(name.id));
+  const surnames = useSurnames();
   return (
     <View
       style={[
@@ -25,8 +28,13 @@ export function NameRow({ name }: { name: Name }) {
     >
       <PaletteProvider palette={card}>
         <View style={styles.text}>
-          <Text variant="name" numberOfLines={1}>
+          <Text variant="name" numberOfLines={surnames ? 2 : 1}>
             {name.name}
+            {surnames ? (
+              <Text variant="heading" tone="muted">
+                {` ${surnames}`}
+              </Text>
+            ) : null}
           </Text>
           <Text variant="caption" tone="muted" numberOfLines={1}>
             {name.meaning}
@@ -45,6 +53,8 @@ const styles = StyleSheet.create({
     borderCurve: 'continuous',
     paddingLeft: space.xl,
     paddingRight: space.lg,
+    // Con apellidos el nombre puede pasar a dos líneas: que no toque el borde.
+    paddingVertical: space.md,
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.md,

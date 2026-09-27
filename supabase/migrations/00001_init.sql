@@ -8,9 +8,14 @@
 
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
+  -- Lo elige la persona y lo ve su pareja. Sin género, rol ni datos del
+  -- embarazo: la app no los necesita.
   display_name text,
   -- Tokens de Expo Push (puede haber más de un dispositivo).
   expo_push_tokens text[] not null default '{}',
+  -- Push sin el nombre del bebé ("Tienes novedades"): la pantalla bloqueada
+  -- la ve cualquiera. El nombre de la pareja no va nunca, esté o no activo.
+  push_discreet boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -82,14 +87,23 @@ as $$
   limit 1;
 $$;
 
--- Perfil automático al registrarse.
+-- Perfil automático al registrarse. El nombre del proveedor es solo una
+-- sugerencia (puede ser uno que la persona ya no usa): la app pregunta "¿Cómo
+-- quieres que te llamemos?" al entrar. Solo el primer nombre: la pareja no
+-- necesita el apellido. Apple no lo manda en el token; llega del cliente.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql security definer set search_path = public
 as $$
 begin
   insert into profiles (id, display_name)
-  values (new.id, new.raw_user_meta_data ->> 'full_name');
+  values (
+    new.id,
+    coalesce(
+      new.raw_user_meta_data ->> 'given_name',
+      nullif(split_part(new.raw_user_meta_data ->> 'full_name', ' ', 1), '')
+    )
+  );
   return new;
 end;
 $$;

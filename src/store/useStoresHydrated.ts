@@ -3,12 +3,13 @@ import { useSyncExternalStore } from 'react';
 import { useDeckStore } from './useDeckStore';
 import { useLibraryStore } from './useLibraryStore';
 import { useOnboardingStore } from './useOnboardingStore';
+import { useSurnamesStore } from './useSurnamesStore';
 
 // Los stores persistidos leen AsyncStorage de forma asíncrona. Hasta que
 // terminan, `done` vale su default (false) y el gate mostraría el onboarding
 // un instante en cada arranque. El layout raíz espera esto antes de ocultar
 // el splash.
-const stores = [useOnboardingStore, useLibraryStore, useDeckStore];
+const stores = [useOnboardingStore, useLibraryStore, useDeckStore, useSurnamesStore];
 
 function subscribe(onChange: () => void) {
   const unsubscribes = stores.map((s) => s.persist.onFinishHydration(onChange));

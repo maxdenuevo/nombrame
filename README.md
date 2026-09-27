@@ -1,8 +1,8 @@
 # nombra.me
 
-App móvil tipo "swipe" para que las parejas encuentren juntos el nombre de su
+App móvil tipo "swipe" para que las parejas elijan de a dos el nombre de su
 bebé. Cada persona desliza nombres — izquierda es paso, derecha es me gusta —
-y cuando ambos dan like al mismo nombre, es un **match**. También hay un modo
+y cuando coinciden en un nombre, es un **match**. También hay un modo
 individual para armar una lista de favoritos.
 
 ## Stack

@@ -6,8 +6,8 @@ import type { GenderFilter, Name } from './types';
 // membresía y el orden vendrán de `deck_names` vía TanStack Query, pero el
 // filtrado por género y el progreso seguirán calculándose igual en cliente.
 
-/** Preset inclusivo: un nombre neutro es válido para cualquier búsqueda.
- * "Niña" = f + x, "Niño" = m + x, "Neutro" = solo x. */
+/** Preset inclusivo: un nombre unisex es válido para cualquier búsqueda.
+ * "Niña" = f + x, "Niño" = m + x, "Unisex" = solo x. */
 export function matchesGender(name: Name, filter: GenderFilter): boolean {
   if (filter === 'all') return true;
   if (filter === 'x') return name.gender === 'x';
