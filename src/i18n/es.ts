@@ -1,4 +1,4 @@
-// Copy en español neutro (ligeramente chileno donde tenga sentido). Ver DESIGN.md §7.
+// Copy en español neutro (ligeramente chileno donde tenga sentido). Ver DESIGN.md, "Voz y microcopy".
 export default {
   tabs: {
     swipe: 'Deslizar',
@@ -9,6 +9,14 @@ export default {
     like: 'Me gusta',
     pass: 'Paso',
     undo: 'Deshacer el último swipe',
+    progress: '%{seen} de %{total}',
+    progressA11y: '%{seen} de %{total} nombres vistos',
+    changeDeck: 'Cambiar de deck. Deck actual: %{deck}',
+    changeFilter: 'Cambiar el filtro de género. Filtro actual: %{filter}',
+    a11y: {
+      card: '%{name}. %{origin}, %{gender}. %{meaning}',
+      hint: 'Desliza a la derecha si te gusta o a la izquierda para pasar. También puedes usar las acciones.',
+    },
     exhausted: {
       title: 'Ya viste todos los nombres que tenemos por ahora.',
       subtitle: 'Vuelve más adelante por más.',
@@ -28,6 +36,7 @@ export default {
   },
   favorites: {
     title: 'Tus favoritos',
+    count: '%{count} favoritos',
     empty: {
       title: 'Aún no tienes favoritos.',
       subtitle: 'Desliza a la derecha los nombres que te gusten.',
@@ -36,15 +45,14 @@ export default {
   },
   matches: {
     title: 'Tus matches',
+    soon: 'Muy pronto',
     noCouple: {
       title: 'nombra.me funciona de a dos.',
       subtitle: 'Invita a tu pareja y cuando a ambos les guste el mismo nombre, es un match.',
-      cta: 'Invitar a tu pareja',
-      comingSoon: 'La vinculación de parejas llega pronto.',
     },
     empty: {
       title: 'Todavía no coinciden.',
-      subtitle: 'Sigan deslizando — el nombre anda por ahí.',
+      subtitle: 'Sigan deslizando: el nombre anda por ahí.',
       cta: 'Deslizar nombres',
     },
   },
@@ -56,15 +64,37 @@ export default {
   library: {
     title: 'Tus decks',
     discover: 'Descubrir',
+    close: 'Cerrar',
     filter: {
       label: 'Mostrar nombres de',
       all: 'Todos',
     },
     allNames: 'Todos los nombres',
-    allNamesDescription: 'El catálogo completo, sin filtro temático.',
-    add: 'Agregar',
-    added: 'Agregado',
+    count: '%{count} nombres',
     progress: '%{seen} de %{total} vistos',
-    activeDeck: 'Deck activo',
+    active: 'Activo',
+    activeA11y: '%{deck}, deck activo. %{progress}',
+    deckA11y: '%{deck}. %{progress}',
+  },
+  onboarding: {
+    skip: 'Saltar',
+    step: 'Paso %{step} de %{total}',
+    welcome: {
+      title: 'Encuentren el nombre juntos',
+      body: 'Cada uno desliza por su lado. Cuando a los dos les gusta el mismo nombre, es un match.',
+      cta: 'Empezar',
+    },
+    swipe: {
+      title: 'Desliza para decidir',
+      body: 'A la derecha si te gusta, a la izquierda para pasar. Los botones de abajo hacen lo mismo.',
+      cta: 'Entendido',
+    },
+    gender: {
+      title: '¿Ya saben si es niña o niño?',
+      body: 'Te mostramos los nombres que buscan. Puedes cambiarlo cuando quieras en la biblioteca.',
+      girl: 'Es niña',
+      boy: 'Es niño',
+      unknown: 'Todavía no sabemos',
+    },
   },
 };

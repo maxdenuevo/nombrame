@@ -46,6 +46,34 @@ Construido con dos fuentes, ambas del Registro Civil:
 - **Criterio:** ≤ 5 letras, pronunciables igual en español e inglés, sin
   diminutivo posible. Curado a mano.
 
+### Top 100 España (`top-espana`)
+
+- **Fuente:** INE, "Nombres más frecuentes de los recién nacidos", año 2024,
+  hoja TOTAL (`https://www.ine.es/daco/daco42/nombyapel/nomnac24.xlsx`,
+  capturado el 11-08-2026). Top 100 exacto por sexo, intercalado por posición.
+  El XLSX viene sin tildes; se restauraron a mano (Sofía, Lucía, Martín…).
+
+### Top 100 Italia (`top-italia`)
+
+- **Fuente:** ISTAT, clasificación anual de nombres de nacidos 2023 (top 50
+  por sexo), transcrita de `periodofertile.it` (capturado el 11-08-2026).
+  **Pendiente:** verificar contra la publicación ISTAT original. Las formas
+  italianas se conservan tal cual (son el atractivo del deck).
+
+### Top 20 Argentina (`top-argentina`)
+
+- **Fuente:** RENAPER / Dirección Nacional de Población, inscripciones 2025
+  (al 01-12-2025), vía Infobae 02-01-2026 (capturado el 11-08-2026). El
+  dashboard oficial (`estadisticas.renaper.gob.ar/app_nombres/`) topea en 20
+  por año; la nota lista 19 por sexo. "Franchesca" figura así en la fuente.
+
+### Top 10 México (`top-mexico`)
+
+- **Fuente:** INEGI (ENR) / RENAPO, agregado 2017-2021, vía
+  `mexicosocial.org/nombres-mas-comunes/` (capturado el 11-08-2026). No hay
+  dataset abierto de nombres en México; ampliar requeriría solicitud de
+  transparencia (INAI). Incluye compuestos (María José, Miguel Ángel).
+
 ## Significados y orígenes
 
 Los campos `origin` y `meaning` son curaduría propia sobre etimologías
@@ -61,7 +89,13 @@ Pascal (femenino en Chile según los datos de inscripción).
 - **Lote 2** (13): nombres del top 10 2025 que faltaban.
 - **Lote 3** (15): tanda griega para el deck Griegos.
 - **Lote 4** (65): resto del top 50 por sexo (guaguas 2021).
-- **Total: 117 nombres.**
-- **Pendiente:** seguir hacia ~250 (más orígenes — mapuche, vasco, árabe —,
-  más decks temáticos) y QA de contenido (tildes, largos de meaning en la
-  card). Es trabajo de curaduría humana, ~40-50 nombres/día con calidad.
+- **Lote 5** (148): top 100 por sexo de España (INE 2024).
+- **Lote 6** (71): top 50 por sexo de Italia (ISTAT 2023).
+- **Lote 7** (10): top 20 de Argentina (RENAPER 2025).
+- **Lote 8** (6): top 10 de México (INEGI/RENAPO).
+- **Total: 352 nombres.**
+- Casos especiales de género: Andrea y Elia van como neutro (`x`) — son
+  femeninos en España y masculinos en Italia.
+- **Pendiente:** QA de contenido con hablante nativo (los lotes 5-8 se
+  curaron en tanda grande; los significados son glosas estándar sin
+  verificación individual), más orígenes (mapuche) y decks temáticos.

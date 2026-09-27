@@ -7,12 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "nombrame",
     "userInterfaceStyle": "automatic",
-    "ios": {
-      "icon": "./assets/expo.icon"
-    },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#F7F6F9",
+        "backgroundColor": "#C7CDFF",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -28,11 +25,11 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#F7F6F9",
+          "backgroundColor": "#F6F4FA",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76,
+          "imageWidth": 180,
           "dark": {
-            "backgroundColor": "#17131D"
+            "backgroundColor": "#131118"
           }
         }
       ],

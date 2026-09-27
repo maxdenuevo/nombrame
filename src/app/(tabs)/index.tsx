@@ -1,24 +1,35 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { DeckActions } from '@/components/DeckActions';
 import { DeckHeader } from '@/components/DeckHeader';
 import { EmptyState } from '@/components/EmptyState';
-import { SwipeDeck, type SwipeDirection } from '@/components/SwipeDeck';
-import { UndoButton } from '@/components/UndoButton';
+import { SwipeDeck, type SwipeDeckHandle, type SwipeDirection } from '@/components/SwipeDeck';
+import { useTabBarClearance } from '@/components/TabBar';
+import { Wash } from '@/components/ui/Wash';
 import { deckProgress, getDeckStack } from '@/data/deckUtils';
 import { decks } from '@/data/decks';
 import type { Name } from '@/data/types';
+import type { SurfacePalette } from '@/design/chrome';
+import { PaletteProvider } from '@/design/PaletteContext';
+import { swatchFor, swatchForDeck } from '@/design/swatches';
+import { space, withAlpha } from '@/design/tokens';
+import { useScheme } from '@/design/useScheme';
 import { t } from '@/i18n';
+import { haptic } from '@/lib/haptics';
 import { useDeckStore } from '@/store/useDeckStore';
 import { useLibraryStore } from '@/store/useLibraryStore';
-import { spacing } from '@/theme/tokens';
 
 const UNDO_VISIBLE_MS = 5000;
 
 export default function SwipeScreen() {
   const router = useRouter();
+  const { dark, chrome } = useScheme();
+  const clearance = useTabBarClearance();
+  const deckRef = useRef<SwipeDeckHandle>(null);
+
   const swiped = useDeckStore((s) => s.swiped);
   const canUndo = useDeckStore((s) => s.canUndo);
   const swipe = useDeckStore((s) => s.swipe);
@@ -49,8 +60,24 @@ export default function SwipeScreen() {
 
   const activeDeck = activeDeckSlug ? decks.find((d) => d.slug === activeDeckSlug) : undefined;
   const deckTitle = activeDeck ? activeDeck.title : t('library.allNames');
+  const active = stack[0];
 
-  // El botón de deshacer desaparece pasados ~5 s de inactividad.
+  // La pantalla entera se tiñe con el color de la card activa: el fondo se
+  // lava con su swatch y el texto de chrome toma su tinta (pasa AA sobre el
+  // lavado; lo verifica scripts/check-design.mjs).
+  const activeScheme = active ? swatchFor(active.id)[dark ? 'dark' : 'light'] : null;
+  const surface: SurfacePalette = activeScheme
+    ? {
+        bg: activeScheme.card.bg,
+        ink: activeScheme.card.ink,
+        inkMuted: activeScheme.card.inkMuted,
+        fill: withAlpha(activeScheme.card.ink, 0.12),
+      }
+    : chrome;
+  const wash = activeScheme ? activeScheme.wash : chrome.wash;
+  const washId = `${active ? swatchFor(active.id).id : 'chrome'}-${dark ? 'dark' : 'light'}`;
+
+  // Deshacer se deshabilita pasados ~5 s de inactividad.
   useEffect(() => {
     if (!canUndo) return;
     const timer = setTimeout(hideUndo, UNDO_VISIBLE_MS);
@@ -58,90 +85,99 @@ export default function SwipeScreen() {
   }, [canUndo, swiped.length, hideUndo]);
 
   const handleSwipe = (name: Name, liked: boolean) => {
+    if (liked) haptic.like();
+    else haptic.pass();
     swipe(name.id, liked);
     setRestored(null);
   };
 
   const handleUndo = () => {
     const record = undo();
-    if (record) {
-      setRestored({
-        id: record.nameId,
-        from: record.liked ? 'right' : 'left',
-        deckSlug: activeDeckSlug,
-        filter: genderFilter,
-      });
-    }
+    if (!record) return;
+    haptic.undo();
+    setRestored({
+      id: record.nameId,
+      from: record.liked ? 'right' : 'left',
+      deckSlug: activeDeckSlug,
+      filter: genderFilter,
+    });
   };
 
-  const header = (
-    <DeckHeader
-      title={deckTitle}
-      overline={t('library.activeDeck')}
-      progress={t('library.progress', { seen: progress.seen, total: progress.total })}
-      filterLabel={genderFilter === 'all' ? null : t(`gender.${genderFilter}`)}
-      onPress={() => router.push('/decks')}
-    />
-  );
-
-  if (stack.length === 0) {
-    // Tres finales distintos: deck sin nombres para el filtro actual, deck
-    // temático completado, y catálogo completo agotado.
-    const empty =
-      progress.total === 0
+  // Tres finales distintos: deck sin nombres para el filtro actual, deck
+  // temático completado, y catálogo completo agotado.
+  const empty =
+    progress.total === 0
+      ? {
+          title: t('deck.emptyForFilter.title'),
+          subtitle: t('deck.emptyForFilter.subtitle'),
+          ctaLabel: t('deck.emptyForFilter.cta'),
+          onPress: () => router.push('/decks'),
+        }
+      : activeDeck
         ? {
-            title: t('deck.emptyForFilter.title'),
-            subtitle: t('deck.emptyForFilter.subtitle'),
-            ctaLabel: t('deck.emptyForFilter.cta'),
+            title: t('deck.done.title'),
+            subtitle: t('deck.done.subtitle'),
+            ctaLabel: t('deck.done.cta'),
             onPress: () => router.push('/decks'),
           }
-        : activeDeck
-          ? {
-              title: t('deck.done.title'),
-              subtitle: t('deck.done.subtitle'),
-              ctaLabel: t('deck.done.cta'),
-              onPress: () => router.push('/decks'),
-            }
-          : {
-              title: t('deck.exhausted.title'),
-              subtitle: t('deck.exhausted.subtitle'),
-              ctaLabel: t('deck.exhausted.ctaFavorites'),
-              onPress: () => router.navigate('/favoritos'),
-            };
-    return (
-      <SafeAreaView style={styles.screen}>
-        {header}
-        <EmptyState
-          title={empty.title}
-          subtitle={empty.subtitle}
-          ctaLabel={empty.ctaLabel}
-          onPress={empty.onPress}
-        />
-      </SafeAreaView>
-    );
-  }
-
-  const active = stack[0];
+        : {
+            title: t('deck.exhausted.title'),
+            subtitle: t('deck.exhausted.subtitle'),
+            ctaLabel: t('deck.exhausted.ctaFavorites'),
+            onPress: () => router.navigate('/favoritos'),
+          };
 
   return (
-    <SafeAreaView style={styles.screen}>
-      {header}
-      <View style={styles.deckArea}>
-        <SwipeDeck
-          stack={stack}
-          onSwipe={handleSwipe}
-          enterFrom={
-            restored &&
-            restored.id === active.id &&
-            restored.deckSlug === activeDeckSlug &&
-            restored.filter === genderFilter
-              ? restored.from
-              : undefined
-          }
-        />
-      </View>
-      <View style={styles.footer}>{canUndo ? <UndoButton onPress={handleUndo} /> : null}</View>
-    </SafeAreaView>
+    <View style={styles.screen}>
+      <Wash wash={wash} id={washId} />
+      <PaletteProvider palette={surface}>
+        <SafeAreaView edges={['top']} style={[styles.screen, { paddingBottom: clearance }]}>
+          <DeckHeader
+            deckTitle={deckTitle}
+            deckSwatch={swatchForDeck(activeDeckSlug)}
+            filterLabel={
+              genderFilter === 'all' ? t('library.filter.all') : t(`gender.${genderFilter}`)
+            }
+            seen={progress.seen}
+            total={progress.total}
+            onPress={() => router.push('/decks')}
+          />
+          {active ? (
+            <>
+              <View style={styles.deckArea}>
+                <SwipeDeck
+                  ref={deckRef}
+                  stack={stack}
+                  onSwipe={handleSwipe}
+                  enterFrom={
+                    restored &&
+                    restored.id === active.id &&
+                    restored.deckSlug === activeDeckSlug &&
+                    restored.filter === genderFilter
+                      ? restored.from
+                      : undefined
+                  }
+                />
+              </View>
+              <DeckActions
+                cardId={active.id}
+                canUndo={canUndo}
+                onPass={() => deckRef.current?.swipe('left')}
+                onUndo={handleUndo}
+                onLike={() => deckRef.current?.swipe('right')}
+              />
+            </>
+          ) : (
+            <EmptyState
+              title={empty.title}
+              subtitle={empty.subtitle}
+              ctaLabel={empty.ctaLabel}
+              onPress={empty.onPress}
+            />
+          )}
+        </SafeAreaView>
+      </PaletteProvider>
+    </View>
   );
 }
 
@@ -151,14 +187,7 @@ const styles = StyleSheet.create({
   },
   deckArea: {
     flex: 1,
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.xl,
-    marginBottom: spacing.xl,
-  },
-  footer: {
-    height: spacing['4xl'] + spacing.xl,
-    paddingHorizontal: spacing.xl,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    marginHorizontal: space.xl,
+    marginTop: space.xl,
   },
 });

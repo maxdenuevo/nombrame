@@ -1,97 +1,90 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
-import { AppText } from '@/components/AppText';
-import { Chip } from '@/components/Chip';
-import { Material } from '@/components/Material';
+import { Chip } from '@/components/ui/Chip';
+import { Glass } from '@/components/ui/Glass';
+import { Text } from '@/components/ui/Text';
 import type { Name } from '@/data/types';
+import { fitFontSize } from '@/design/fitText';
+import { cardBlobPositions, meshStyle } from '@/design/gradient';
+import { PaletteProvider } from '@/design/PaletteContext';
+import { swatchFor } from '@/design/swatches';
+import { nameXlMin, radius, shadow, space, type } from '@/design/tokens';
+import { useSwatchScheme } from '@/design/useScheme';
 import { t } from '@/i18n';
-import { continuousCurve, elevation, radius, spacing } from '@/theme/tokens';
-import { useTheme } from '@/theme/useTheme';
-
-// Piso de auto-shrink: name-xl (44) puede reducirse hasta 32 pt antes de
-// permitir wrap a dos líneas. Un nombre nunca se trunca con "…" (DESIGN.md §5).
-const MIN_NAME_SCALE = 32 / 44;
 
 /**
- * Componente de referencia del sistema. Estructura concéntrica:
- *
- *   contenedor  radius 40, material, padding 4
- *     interior  radius 36, surface opaca
- *
- * El material del marco difumina la card siguiente, que se asoma detrás con
- * escala 0.96. El interior es opaco para que el nombre no compita con nada.
+ * La card de swipe: el nombre sobre la malla de su color. Todo lo de adentro
+ * (chips, textos, vidrio) toma su tinta del swatch vía `PaletteProvider`.
  */
 export function NameCard({ name }: { name: Name }) {
-  const { colors, dark } = useTheme();
+  const scheme = useSwatchScheme(swatchFor(name.id));
+  const { card } = scheme;
+  const { width } = useWindowDimensions();
+  const size = fitFontSize(
+    name.name,
+    width - 2 * space.xl - 2 * space['2xl'],
+    type.nameXl.fontSize,
+    nameXlMin,
+  );
+
   return (
-    // La sombra va en un contenedor sin `overflow: hidden`, o iOS no la dibuja.
     <View
       style={[
-        styles.shadow,
-        elevation.floating,
-        dark && { borderWidth: 1, borderColor: colors.separator },
+        styles.card,
+        { boxShadow: shadow.card(scheme.shadow) },
+        meshStyle(
+          card.bg,
+          card.blobs.map((color, i) => ({ color, at: cardBlobPositions[i], reach: '50%' })),
+        ),
       ]}
     >
-      <Material radius={radius.cardOuter} style={styles.frame}>
-        <View
-          style={[
-            styles.inner,
-            // En oscuro la card se lee "por encima" por el tono, no por la sombra.
-            { backgroundColor: dark ? colors.surfaceElevated : colors.surface },
-          ]}
-        >
-          <AppText
+      <PaletteProvider palette={card}>
+        <View style={styles.chips}>
+          <Chip label={name.origin} />
+          <Chip label={t(`gender.${name.gender}`)} />
+        </View>
+        <View style={styles.center}>
+          <Text
             variant="nameXl"
-            style={styles.name}
-            adjustsFontSizeToFit
             numberOfLines={2}
-            minimumFontScale={MIN_NAME_SCALE}
+            // Red de seguridad para font scale alto: el tamaño ya viene ajustado.
+            adjustsFontSizeToFit
+            minimumFontScale={nameXlMin / size}
+            style={[styles.centered, { fontSize: size, lineHeight: Math.round(size * 1.08) }]}
           >
             {name.name}
-          </AppText>
-          <AppText tone="secondary" style={styles.meaning}>
-            {name.meaning}
-          </AppText>
-          <View style={styles.chips}>
-            <Chip label={name.origin} />
-            <Chip label={t(`gender.${name.gender}`)} />
-          </View>
+          </Text>
         </View>
-      </Material>
+        <Glass radius={radius.row} style={styles.meaning}>
+          <Text style={styles.centered}>{name.meaning}</Text>
+        </Glass>
+      </PaletteProvider>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  shadow: {
+  card: {
     flex: 1,
-    borderRadius: radius.cardOuter,
-    ...continuousCurve,
-  },
-  frame: {
-    flex: 1,
-    // El interior queda 4 pt adentro: 40 − 4 = 36, curvas concéntricas.
-    padding: spacing.xs,
-  },
-  inner: {
-    flex: 1,
-    borderRadius: radius.cardInner,
-    ...continuousCurve,
-    paddingHorizontal: spacing['2xl'],
-    paddingVertical: spacing['4xl'],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  name: {
-    textAlign: 'center',
-  },
-  meaning: {
-    textAlign: 'center',
-    marginTop: spacing.xl,
+    borderRadius: radius.card,
+    borderCurve: 'continuous',
+    padding: space['2xl'],
   },
   chips: {
     flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing['2xl'],
+    flexWrap: 'wrap',
+    gap: space.sm,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centered: {
+    textAlign: 'center',
+  },
+  meaning: {
+    paddingHorizontal: space.lg,
+    paddingVertical: space.lg,
   },
 });

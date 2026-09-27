@@ -1,77 +1,104 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { StyleSheet, View } from 'react-native';
 
-import { AppText } from '@/components/AppText';
-import { Chip } from '@/components/Chip';
-import { minTouchTarget, spacing } from '@/theme/tokens';
-import { useTheme } from '@/theme/useTheme';
+import { Glass } from '@/components/ui/Glass';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { Squish } from '@/components/ui/Squish';
+import { Text } from '@/components/ui/Text';
+import { meshStyle } from '@/design/gradient';
+import { usePalette } from '@/design/PaletteContext';
+import type { Swatch } from '@/design/swatches';
+import { radius, space, touchTarget } from '@/design/tokens';
+import { t } from '@/i18n';
 
 interface DeckHeaderProps {
-  /** Nombre del deck activo ("Top 100 Chile" o "Todos los nombres"). */
-  title: string;
-  /** Etiqueta pequeña sobre el título ("Deck activo"). */
-  overline: string;
-  /** Progreso ya formateado ("12 de 100 vistos"). */
-  progress: string;
-  /** Filtro de género activo, o null con filtro "Todos" (sin chip: es el
-   * estado por defecto y no necesita anunciarse). */
-  filterLabel: string | null;
+  deckTitle: string;
+  /** Color del deck: el punto de la pill lo identifica igual que su cover en la biblioteca. */
+  deckSwatch: Swatch;
+  filterLabel: string;
+  seen: number;
+  total: number;
+  /** Ambas pills abren la biblioteca, donde se cambia deck y filtro. */
   onPress: () => void;
 }
 
-// Cabecera del deck en la pantalla de swipe. Todo el header es presionable y
-// lleva a la biblioteca. UI silenciosa: el nombre de la card sigue siendo el
-// héroe — esto es chrome, tonos secundarios y tamaños contenidos (DESIGN §1).
-export function DeckHeader({ title, overline, progress, filterLabel, onPress }: DeckHeaderProps) {
-  const { colors } = useTheme();
+export function DeckHeader({
+  deckTitle,
+  deckSwatch,
+  filterLabel,
+  seen,
+  total,
+  onPress,
+}: DeckHeaderProps) {
+  const palette = usePalette();
+  const dot = deckSwatch.light;
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${overline}: ${title}. ${progress}`}
-      onPress={onPress}
-      style={({ pressed }) => [styles.header, pressed && styles.pressed]}
-    >
-      <View style={styles.info}>
-        <AppText variant="overline" tone="tertiary">
-          {overline}
-        </AppText>
-        <View style={styles.titleRow}>
-          <AppText variant="heading" numberOfLines={1} style={styles.title}>
-            {title}
-          </AppText>
-          <Ionicons name="chevron-down" size={16} color={colors.labelSecondary} />
-        </View>
-        <AppText variant="caption" tone="secondary">
-          {progress}
-        </AppText>
+    <View style={styles.header}>
+      <View style={styles.pills}>
+        <Squish
+          onPress={onPress}
+          accessibilityLabel={t('deck.changeDeck', { deck: deckTitle })}
+          style={styles.shrink}
+        >
+          <Glass radius={radius.pill} style={[styles.pill, styles.deckPill]}>
+            <View
+              style={[
+                styles.dot,
+                meshStyle(dot.card.bg, [{ color: dot.mesh.blobs[1], at: '30% 30%', reach: '90%' }]),
+              ]}
+            />
+            <Text variant="label" numberOfLines={1} style={styles.shrink}>
+              {deckTitle}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color={palette.ink} />
+          </Glass>
+        </Squish>
+        <Squish
+          onPress={onPress}
+          accessibilityLabel={t('deck.changeFilter', { filter: filterLabel })}
+        >
+          <Glass radius={radius.pill} style={styles.pill}>
+            <Text variant="caption">{filterLabel}</Text>
+          </Glass>
+        </Squish>
       </View>
-      {filterLabel ? <Chip label={filterLabel} /> : null}
-    </Pressable>
+      <ProgressBar
+        value={seen}
+        total={total}
+        label={t('deck.progress', { seen, total })}
+        accessibilityLabel={t('deck.progressA11y', { seen, total })}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    minHeight: minTouchTarget,
+    paddingHorizontal: space.xl,
+    paddingTop: space.md,
+    gap: space.md,
+  },
+  pills: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    gap: spacing.lg,
+    gap: space.sm,
   },
-  info: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  title: {
+  shrink: {
     flexShrink: 1,
   },
-  pressed: {
-    opacity: 0.7,
+  pill: {
+    minHeight: touchTarget - space.xs,
+    paddingHorizontal: space.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+  },
+  deckPill: {
+    paddingLeft: space.sm,
+  },
+  dot: {
+    width: space['3xl'] - space.xs,
+    height: space['3xl'] - space.xs,
+    borderRadius: radius.pill,
   },
 });

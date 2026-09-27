@@ -16,9 +16,15 @@ para armar una lista de favoritos.
 - **Estado de servidor / data fetching:** TanStack Query (React Query)
 - **Swipe cards (gestos + animación):** react-native-reanimated 4 +
   react-native-gesture-handler. Mutar shared values con `.get()`/`.set()`, no
-  con `.value =` — el lint del React Compiler lo exige.
-- **Material translúcido:** expo-blur, siempre a través del componente
-  `Material` (blur en iOS, sólido en Android). Ver DESIGN.md §4.
+  con `.value =` — el lint del React Compiler lo exige. Para volver a JS desde
+  un worklet, `scheduleOnRN` (react-native-worklets); `runOnJS` está deprecado.
+- **Design system:** `src/design/` (swatches por nombre, chrome, tokens) y
+  primitivos en `src/components/ui/`. Colores siempre vía `usePalette()` /
+  `useScheme()`, nunca literales. Ver DESIGN.md.
+- **Vidrio y malla:** `Glass` (Liquid Glass nativo con expo-glass-effect en
+  iOS 26, translúcido en Android) y `MeshBackdrop` (gradientes radiales
+  nativos de RN 0.86, sin librería). Nada depende del blur. Ver DESIGN.md §4.
+- **Háptica:** expo-haptics, siempre a través de `src/lib/haptics.ts`.
 - **Backend:** Supabase (Postgres + Auth + Realtime + Row Level Security)
 - **Auth:** Google + Apple vía Supabase Auth. Al ofrecer social login, Apple exige
   Sign in with Apple en iOS (política de App Store) — no es opcional. Ambos
@@ -95,22 +101,30 @@ Dos canales, según el estado de la app de quien recibe:
 ## Estructura y estado actual
 
 ```
-src/app/            pantallas (Expo Router): (tabs)/index = deck, favoritos, matches; /decks = biblioteca (modal)
-src/components/     SwipeDeck, NameCard, DeckCard, DeckHeader, FilterChip, UndoButton, AppText, AppButton, Chip, Material, …
-src/theme/          tokens.ts (primitivos) → theme.ts (semántico) → useTheme
+src/app/            pantallas (Expo Router): (tabs)/index = deck, favoritos, matches;
+                    /decks = biblioteca (modal); /onboarding = 3 pasos (gate con Stack.Protected)
+src/components/     piezas de producto: SwipeDeck, NameCard, DeckActions, DeckHeader,
+                    DeckCover, NameRow, TabBar, OnboardingStep, CardFan, …
+src/components/ui/  primitivos: Text, Button, IconButton, Chip, Glass, MeshBackdrop, Wash, …
+src/design/         swatches (color por nombre), chrome, tokens, PaletteContext, useScheme
+src/lib/            haptics
 src/i18n/           claves de traducción (solo es por ahora)
 src/data/           names.ts + decks.ts: catálogo local TEMPORAL (fuente del seed
                     generado; ver SOURCES.md y scripts/generate-seed.mjs)
-src/store/          useDeckStore (swipes, deshacer de un nivel) y useLibraryStore
-                    (deck activo, filtro de género, biblioteca) — ambos persistidos
-                    en AsyncStorage
+src/store/          useDeckStore (swipes, deshacer de un nivel), useLibraryStore
+                    (deck activo, filtro de género, biblioteca) y useOnboardingStore,
+                    persistidos en AsyncStorage; useStoresHydrated para el gate
+scripts/            check-design.mjs (AA, hash, PNG) y brand/render.mjs (ícono, splash)
 supabase/migrations schema completo, SIN APLICAR (no existe el proyecto aún);
                     00002 y 00004 son GENERADOS, no editar a mano
 ```
 
-Funciona hoy: deck de swipe con catálogo local, decks temáticos con biblioteca
-y filtro de género, favoritos, estados vacíos, modo claro/oscuro, splash hasta
-cargar fuentes, persistencia local de swipes y biblioteca. **Pendiente:**
+Funciona hoy: design system "Malla" (color fijo por nombre, vidrio, malla),
+onboarding de 3 pasos, deck de swipe con botones, acciones de accesibilidad y
+háptica, decks temáticos con biblioteca y filtro de género, favoritos, estados
+vacíos, modo claro/oscuro, marca propia (ícono, splash), splash hasta cargar
+fuentes e hidratar, persistencia local de swipes, biblioteca y onboarding.
+**Pendiente:**
 proyecto de Supabase (aplicar migraciones), auth Google/Apple, wiring de
 TanStack Query (hoy el provider existe pero nadie lo usa), vinculación de
 pareja, MatchModal, Edge Function de push, expansión del catálogo a ~250
@@ -136,6 +150,8 @@ npm install                  # instalar dependencias
 npx expo start               # dev server (Expo Go / dev build)
 npm run lint                 # ESLint (expo lint)
 npm run typecheck            # tsc --noEmit
+npm run check:design         # AA de cada color, reparto del hash, PNG de marca
+node scripts/brand/render.mjs  # regenerar ícono, adaptive icon, splash y favicon
 npx prettier --write .       # formateo
 ```
 
@@ -145,8 +161,11 @@ npx prettier --write .       # formateo
   toquen los primeros builds nativos.
 - Verificación rápida sin dispositivo: `npx expo export --platform android`
   confirma que el bundle compila; para ver la app, `npx expo start` y Chrome
-  headless contra `http://localhost:8081` (ancho mínimo real de ventana
-  headless: ~500 px — capturas más angostas salen recortadas, no es un bug).
+  headless contra `http://localhost:8081`. La ventana headless no baja de
+  ~500 px de ancho; para medidas de teléfono usar el protocolo DevTools con
+  `Emulation.setDeviceMetricsOverride` (390×844, 360×640).
+- El onboarding aparece con storage vacío: para capturar otras pantallas,
+  sembrar `localStorage.onboarding = {"state":{"done":true},"version":1}`.
 
 ## Decisiones diferidas (a propósito)
 

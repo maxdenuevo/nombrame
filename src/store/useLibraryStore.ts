@@ -15,9 +15,9 @@ interface LibraryState {
   genderFilter: GenderFilter;
   /** Decks que la persona "agregó" a su biblioteca, en orden de agregado. */
   addedDeckSlugs: string[];
-  setActiveDeck: (slug: string | null) => void;
+  /** Activa un deck y, si es temático, lo suma a "Tus decks". Un solo toque. */
+  activateDeck: (slug: string | null) => void;
   setGenderFilter: (filter: GenderFilter) => void;
-  addDeck: (slug: string) => void;
   removeDeck: (slug: string) => void;
 }
 
@@ -27,12 +27,15 @@ export const useLibraryStore = create<LibraryState>()(
       activeDeckSlug: null,
       genderFilter: 'all',
       addedDeckSlugs: [],
-      setActiveDeck: (slug) => set({ activeDeckSlug: slug }),
+      activateDeck: (slug) =>
+        set((s) => ({
+          activeDeckSlug: slug,
+          addedDeckSlugs:
+            slug === null || s.addedDeckSlugs.includes(slug)
+              ? s.addedDeckSlugs
+              : [...s.addedDeckSlugs, slug],
+        })),
       setGenderFilter: (filter) => set({ genderFilter: filter }),
-      addDeck: (slug) =>
-        set((s) =>
-          s.addedDeckSlugs.includes(slug) ? s : { addedDeckSlugs: [...s.addedDeckSlugs, slug] },
-        ),
       removeDeck: (slug) =>
         set((s) => ({
           addedDeckSlugs: s.addedDeckSlugs.filter((d) => d !== slug),

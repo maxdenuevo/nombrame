@@ -1,8 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { AppButton } from '@/components/AppButton';
-import { AppText } from '@/components/AppText';
-import { spacing } from '@/theme/tokens';
+import { CardFan } from '@/components/CardFan';
+import { Button } from '@/components/ui/Button';
+import { Text } from '@/components/ui/Text';
+import { space } from '@/design/tokens';
 
 interface EmptyStateProps {
   title: string;
@@ -11,20 +12,24 @@ interface EmptyStateProps {
   onPress: () => void;
 }
 
-// Estados vacíos: solo tipografía, siempre con una acción (ver DESIGN.md §5).
+// Estados vacíos: un abanico de nombres reales, el mensaje y siempre una acción.
+// Es un fin natural o un comienzo, nunca un error.
 export function EmptyState({ title, subtitle, ctaLabel, onPress }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <AppText variant="title" style={styles.center}>
+      <View style={styles.art}>
+        <CardFan />
+      </View>
+      <Text variant="title" style={styles.center}>
         {title}
-      </AppText>
+      </Text>
       {subtitle ? (
-        <AppText tone="secondary" style={[styles.center, styles.subtitle]}>
+        <Text tone="muted" style={[styles.center, styles.subtitle]}>
           {subtitle}
-        </AppText>
+        </Text>
       ) : null}
       <View style={styles.cta}>
-        <AppButton label={ctaLabel} onPress={onPress} />
+        <Button label={ctaLabel} onPress={onPress} />
       </View>
     </View>
   );
@@ -34,16 +39,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: space.xl,
+  },
+  art: {
+    height: space['4xl'] * 3,
+    justifyContent: 'center',
+    marginBottom: space['3xl'],
   },
   center: {
     textAlign: 'center',
   },
   subtitle: {
-    marginTop: spacing.lg,
+    marginTop: space.md,
   },
   cta: {
-    marginTop: spacing['3xl'],
-    alignItems: 'center',
+    marginTop: space['3xl'],
   },
 });

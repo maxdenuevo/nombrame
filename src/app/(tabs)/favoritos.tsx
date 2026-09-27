@@ -3,51 +3,83 @@ import { useMemo } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppText } from '@/components/AppText';
 import { EmptyState } from '@/components/EmptyState';
-import { NameListRow } from '@/components/NameListRow';
+import { NameRow } from '@/components/NameRow';
+import { useTabBarClearance } from '@/components/TabBar';
+import { Text } from '@/components/ui/Text';
+import { Wash } from '@/components/ui/Wash';
 import { names } from '@/data/names';
+import type { Name } from '@/data/types';
+import { usePalette } from '@/design/PaletteContext';
+import { radius, space } from '@/design/tokens';
+import { useScheme } from '@/design/useScheme';
 import { t } from '@/i18n';
-import { selectLikedIds, useDeckStore } from '@/store/useDeckStore';
-import { spacing } from '@/theme/tokens';
+import { useDeckStore } from '@/store/useDeckStore';
+
+const namesById = new Map(names.map((n) => [n.id, n]));
 
 export default function FavoritesScreen() {
   const router = useRouter();
+  const { dark, chrome } = useScheme();
+  const clearance = useTabBarClearance();
   const swiped = useDeckStore((s) => s.swiped);
 
-  const favorites = useMemo(() => {
-    const liked = new Set(selectLikedIds({ swiped }));
-    return names.filter((n) => liked.has(n.id));
-  }, [swiped]);
-
-  if (favorites.length === 0) {
-    return (
-      <SafeAreaView style={styles.screen}>
-        <EmptyState
-          title={t('favorites.empty.title')}
-          subtitle={t('favorites.empty.subtitle')}
-          ctaLabel={t('favorites.empty.cta')}
-          onPress={() => router.navigate('/')}
-        />
-      </SafeAreaView>
-    );
-  }
+  // Lo último que te gustó, primero.
+  const favorites = useMemo(
+    () =>
+      swiped
+        .filter((r) => r.liked)
+        .map((r) => namesById.get(r.nameId))
+        .filter((n): n is Name => n != null)
+        .reverse(),
+    [swiped],
+  );
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <FlatList
-        data={favorites}
-        keyExtractor={(n) => n.id}
-        contentContainerStyle={styles.list}
-        ItemSeparatorComponent={Separator}
-        ListHeaderComponent={
-          <AppText variant="title" style={styles.title}>
-            {t('favorites.title')}
-          </AppText>
-        }
-        renderItem={({ item }) => <NameListRow name={item} />}
-      />
-    </SafeAreaView>
+    <View style={styles.screen}>
+      <Wash wash={chrome.wash} id={`chrome-${dark ? 'dark' : 'light'}`} />
+      <SafeAreaView edges={['top']} style={styles.screen}>
+        {favorites.length === 0 ? (
+          <View style={[styles.screen, { paddingBottom: clearance }]}>
+            <EmptyState
+              title={t('favorites.empty.title')}
+              subtitle={t('favorites.empty.subtitle')}
+              ctaLabel={t('favorites.empty.cta')}
+              onPress={() => router.navigate('/')}
+            />
+          </View>
+        ) : (
+          <FlatList
+            data={favorites}
+            keyExtractor={(n) => n.id}
+            contentContainerStyle={[styles.list, { paddingBottom: clearance }]}
+            ItemSeparatorComponent={Separator}
+            ListHeaderComponent={<Header count={favorites.length} />}
+            renderItem={({ item }) => <NameRow name={item} />}
+          />
+        )}
+      </SafeAreaView>
+    </View>
+  );
+}
+
+function Header({ count }: { count: number }) {
+  const palette = usePalette();
+  return (
+    <View style={styles.header}>
+      <Text variant="title" accessibilityRole="header">
+        {t('favorites.title')}
+      </Text>
+      <View
+        style={[styles.count, { backgroundColor: palette.ink }]}
+        accessible
+        accessibilityLabel={t('favorites.count', { count })}
+      >
+        <Text variant="label" style={{ color: palette.bg }}>
+          {count}
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -60,14 +92,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing['4xl'],
+    paddingHorizontal: space.xl,
   },
-  title: {
-    marginTop: spacing['2xl'],
-    marginBottom: spacing.xl,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    marginTop: space.xl,
+    marginBottom: space.xl,
+  },
+  count: {
+    minWidth: space['3xl'] + space.xs,
+    height: space['3xl'] + space.xs,
+    paddingHorizontal: space.md,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   separator: {
-    height: spacing.lg,
+    height: space.md,
   },
 });
