@@ -27,8 +27,14 @@ export const useDeckStore = create<DeckState>()(
     (set, get) => ({
       swiped: [],
       canUndo: false,
+      // Idempotente: un nombre se desliza una sola vez (igual que la PK
+      // `(user_id, name_id)` de `swipes`). Solo vuelve al stack con deshacer.
       swipe: (nameId, liked) =>
-        set((s) => ({ swiped: [...s.swiped, { nameId, liked }], canUndo: true })),
+        set((s) =>
+          s.swiped.some((r) => r.nameId === nameId)
+            ? s
+            : { swiped: [...s.swiped, { nameId, liked }], canUndo: true },
+        ),
       undo: () => {
         const { swiped, canUndo } = get();
         if (!canUndo || swiped.length === 0) return undefined;
@@ -40,8 +46,22 @@ export const useDeckStore = create<DeckState>()(
     }),
     {
       name: 'deck',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => AsyncStorage),
+      // v1 → v2: el bug del callback de salida guardaba cada swipe dos veces.
+      // Se conserva el primer registro de cada nombre, en su orden original.
+      migrate: (persisted, version) => {
+        const state = persisted as { swiped: SwipeRecord[] };
+        if (version < 2) {
+          const seen = new Set<string>();
+          state.swiped = state.swiped.filter((r) => {
+            if (seen.has(r.nameId)) return false;
+            seen.add(r.nameId);
+            return true;
+          });
+        }
+        return state;
+      },
       // `canUndo` es efímero: no tiene sentido rehidratar un "deshacer"
       // de una sesión anterior.
       partialize: (s) => ({ swiped: s.swiped }),

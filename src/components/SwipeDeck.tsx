@@ -92,8 +92,11 @@ function TopCard({ name, onSwipe, enterFrom }: TopCardProps) {
       if (flung) {
         const liked = (Math.abs(reachTx) > 1 ? reachTx : e.velocityX) > 0;
         tx.set(
-          withTiming((liked ? 1 : -1) * exitX, { duration: EXIT_DURATION }, () => {
-            runOnJS(finishSwipe)(liked);
+          withTiming((liked ? 1 : -1) * exitX, { duration: EXIT_DURATION }, (finished) => {
+            // Reanimated vuelve a llamar este callback con `finished = false`
+            // cuando la card se desmonta tras el swipe. Sin este guard, cada
+            // swipe se registraba dos veces y deshacer solo borraba una copia.
+            if (finished) runOnJS(finishSwipe)(liked);
           }),
         );
         ty.set(withTiming(ty.get() + e.velocityY * 0.05, { duration: EXIT_DURATION }));
